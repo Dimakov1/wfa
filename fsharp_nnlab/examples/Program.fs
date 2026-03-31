@@ -1,72 +1,126 @@
 open NeuroSharp
-open NeuroSharp.Activations
-open NeuroSharp.Layers
-open NeuroSharp.Losses
-open NeuroSharp.Optimizers
-open Examples.ExampleData
-
-let printHeader title =
-    printfn ""
-    printfn "=== %s ===" title
+open Examples
 
 let runXor () =
-    printHeader "XOR classification"
-    let ds = xor ()
-    let model =
-        sequential [
-            dense 2 8 Activations.tanh
-            dense 8 1 Activations.sigmoid
+    printfn "=== XOR ==="
+
+    let x =
+        array2D [
+            [0.0; 0.0]
+            [0.0; 1.0]
+            [1.0; 0.0]
+            [1.0; 1.0]
         ]
 
-    train model ds 3000 4 Losses.binaryCrossEntropy (Optimizers.momentum 0.5 0.9) None (verbose = false)
-    |> ignore
-
-    let preds = predict model ds.Features
-    for r in 0 .. Array2D.length1 preds - 1 do
-        printfn $"input=({ds.Features[r,0]:F0}, {ds.Features[r,1]:F0}) -> pred={preds[r,0]:F4}"
-
-let runSineRegression () =
-    printHeader "Sine regression"
-    let ds = sineRegression 200 |> Dataset.normalizeColumns
-    let trainDs, valDs = Dataset.split 0.8 ds
-    let model =
-        sequential [
-            dense 1 16 Activations.tanh
-            dense 16 16 Activations.tanh
-            dense 16 1 Activations.linear
+    let y =
+        array2D [
+            [0.0]
+            [1.0]
+            [1.0]
+            [0.0]
         ]
 
-    train model trainDs 500 16 Losses.mse (Optimizers.clip 1.0 (Optimizers.sgd 0.05)) None (validationData = valDs, verbose = false)
-    |> ignore
-
-    let preds = predict model valDs.Features
-    printfn $"validation mse = {Losses.mse.Value valDs.Targets preds:F4}"
-
-let runIrisLike () =
-    printHeader "Iris-like 3-class classification"
-    let ds = irisLike ()
-    let trainDs, valDs = Dataset.split 0.8 ds
+    let dataset = Dataset.create x y
 
     let model =
         sequential [
-            dense 4 12 Activations.relu
-            dense 12 12 Activations.relu
-            dense 12 3 Activations.linear
+            Layers.dense 2 8 Activations.tanh
+            Layers.dense 8 1 Activations.sigmoid
         ]
 
     train
         model
-        trainDs
-        250
-        16
-        Losses.categoricalCrossEntropy
-        (Optimizers.clip 5.0 (Optimizers.momentum 0.05 0.9))
-        (Some Metrics.accuracy)
-        (validationData = valDs, verbose = false)
+        dataset
+        2000
+        4
+        Losses.binaryCrossEntropy
+        (Optimizers.sgd 0.1)
+        None
+        None
+        (Some true)
     |> ignore
 
-    let preds = predict model valDs.Features
-    printfn $"validation accuracy = {Metrics.accuracy valDs.Targets preds:F4}"
+    let pred = predict model x
+    printfn "Predictions:"
+    printfn "%A" pred
+
+
+let runSineRegression () =
+    printfn "\n=== Sine regression ==="
+
+    let xs =
+        [|
+            for i in 0 .. 99 ->
+                let x = float i / 10.0
+                [| x |]
+        |]
+
+    let ys =
+        [|
+            for i in 0 .. 99 ->
+                let x = float i / 10.0
+                [| sin x |]
+        |]
+
+    let x = array2D xs
+    let y = array2D ys
+
+    let dataset = Dataset.create x y
+
+    let model =
+        sequential [
+            Layers.dense 1 16 Activations.tanh
+            Layers.dense 16 16 Activations.tanh
+            Layers.dense 16 1 Activations.linear
+        ]
+
+    train
+        model
+        dataset
+        1000
+        8
+        Losses.mse
+        (Optimizers.momentum 0.01 0.9)
+        None
+        None
+        (Some true)
+    |> ignore
+
+    let pred = predict model x
+    printfn "First predictions:"
+    for i in 0 .. 9 do
+        printfn "x=%.2f y=%.4f pred=%.4f" x[i,0] y[i,0] pred[i,0]
+
+
+let runIrisLike () =
+    printfn "\n=== Iris-like classification ==="
+
+    let dataset = ExampleData.irisLike()
+
+    let model =
+        sequential [
+            Layers.dense 4 12 Activations.relu
+            Layers.dense 12 8 Activations.relu
+            Layers.dense 8 3 Activations.sigmoid
+        ]
+
+    let optimizer =
+        Optimizers.clip 1.0 (Optimizers.momentum 0.01 0.9)
+
+    train
+        model
+        dataset
+        300
+        16
+        Losses.categoricalCrossEntropy
+        optimizer
+        None
+        None
+        (Some true)
+    |> ignore
+
+    printfn "Iris-like example finished"
+
 
 [<EntryPoint>]
 let main _ =
