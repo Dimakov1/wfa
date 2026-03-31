@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeuroSharp", "src\\NeuroSharp\\NeuroSharp.fsproj", "{2D0F5E36-D2F0-4DA1-8D62-5C16C00D1292}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Examples", "examples\\Examples.fsproj", "{AF4A5D9D-0F15-413E-92FA-0CE00E61179C}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {2D0F5E36-D2F0-4DA1-8D62-5C16C00D1292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {2D0F5E36-D2F0-4DA1-8D62-5C16C00D1292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {2D0F5E36-D2F0-4DA1-8D62-5C16C00D1292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {2D0F5E36-D2F0-4DA1-8D62-5C16C00D1292}.Release|Any CPU.Build.0 = Release|Any CPU
+        {AF4A5D9D-0F15-413E-92FA-0CE00E61179C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {AF4A5D9D-0F15-413E-92FA-0CE00E61179C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {AF4A5D9D-0F15-413E-92FA-0CE00E61179C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {AF4A5D9D-0F15-413E-92FA-0CE00E61179C}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+EndGlobal
