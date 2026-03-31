@@ -25,7 +25,7 @@ type SequentialModel private (layers: DenseLayer list) =
     member _.Layers = layersArray |> Array.toList
 
     member _.Initialize(optimizer: Optimizer) =
-        layersArray |> Array.iteri (fun i layer -> optimizer.InitializeLayer(i, layer.State))
+        layersArray |> Array.iteri (fun i layer -> optimizer.InitializeLayer i layer.State)
 
     member _.Forward(x: float[,]) =
         ((x, layersArray) ||> Array.fold (fun acc layer -> layer.Forward acc))
@@ -45,7 +45,7 @@ type SequentialModel private (layers: DenseLayer list) =
 
                 for i in layersArray.Length - 1 .. -1 .. 0 do
                     let gradInput, grads = layersArray[i].Backward grad
-                    config.Optimizer.Update(i, layersArray[i].State, grads)
+                    config.Optimizer.Update i layersArray[i].State grads
                     grad <- gradInput
 
             let trainPred = this.Forward trainData.Features

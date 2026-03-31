@@ -12,7 +12,8 @@ module Api =
         (loss: Loss)
         (optimizer: Optimizer)
         (metric: (float[,] -> float[,] -> float) option)
-        (?validationData: Dataset, ?verbose: bool) =
+        (validationData: Dataset option)
+        (verbose: bool option) =
 
         let config =
             {
